@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, send_file
 import openai
 import os
 
@@ -7,10 +7,10 @@ app = Flask(__name__)
 # Load OpenAI API Key
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# Serve the chat UI
+# Serve index.html directly from the project root
 @app.route("/")
 def home():
-    return render_template("index.html")
+    return send_file("index.html")
 
 # Handle chat POST request
 @app.route("/chat", methods=["POST"])
