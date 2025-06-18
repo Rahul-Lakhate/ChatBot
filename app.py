@@ -5,12 +5,10 @@ import os
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# In-memory session tracker
 user_sessions = {}
 
 @app.route("/")
 def home():
-    # Make sure index.html is in the same directory as app.py
     return send_file("index.html")
 
 @app.route("/chat", methods=["POST"])
@@ -19,44 +17,71 @@ def chat():
     user_id = request.remote_addr
 
     if user_id not in user_sessions:
-        user_sessions[user_id] = {"step": "greeting"}
+        user_sessions[user_id] = {"step": "name"}
+        return jsonify({"reply": "Hi, this is the ChatBot created by Rahul. 👋\nMay I know your full name, please?"})
 
     session = user_sessions[user_id]
 
-    if session["step"] == "greeting":
-        session["step"] = "name"
-        return jsonify({"reply": "Hi, this is the ChatBot created by Rahul. 👋\nMay I know your name, please?"})
-
-    elif session["step"] == "name":
+    if session["step"] == "name":
         session["name"] = user_input
+        session["step"] = "phone"
+        return jsonify({"reply": f"Thanks, {user_input}. 📱 May I have your phone number?"})
+
+    elif session["step"] == "phone":
+        session["phone"] = user_input
+        session["step"] = "email"
+        return jsonify({"reply": "📧 Got it. Please provide your email address."})
+
+    elif session["step"] == "email":
+        session["email"] = user_input
+        session["step"] = "location"
+        return jsonify({"reply": "🌍 Great. Now, tell me your current city or location."})
+
+    elif session["step"] == "location":
+        session["location"] = user_input
         session["step"] = "menu"
-        return jsonify({"reply": f"Nice to meet you, {user_input}! How can I assist you today?\n\n1. Savings Account\n2. Current Account\n3. Credit Card\n4. Personal Loan\n5. Vehicle Loan\n\nPlease type the option number."})
+        return jsonify({"reply": menu_message()})
 
     elif session["step"] == "menu":
-        response_map = {
-            "1": "💰 *Savings Account*: High interest (up to 6%), zero balance benefits, and quick digital onboarding.",
-            "2": "🏦 *Current Account*: Ideal for businesses. Unlimited transactions, overdraft facility, and personalized support.",
-            "3": "💳 *Credit Card*: Rewarding cards with cashback, fuel benefits, travel offers, and 0% EMI options.",
-            "4": "💸 *Personal Loan*: Loans up to ₹20 lakhs with minimal documentation and low interest starting at 10.25%.",
-            "5": "🚗 *Vehicle Loan*: Up to 100% financing, fast approvals, and flexible repayment options for cars and bikes."
+        services = {
+            "1": "💰 *Savings Account*: High interest, zero balance, 24/7 access.",
+            "2": "🏦 *Current Account*: Business-friendly, bulk transfers, cheque book facility.",
+            "3": "💳 *Credit Card*: Cashback, lounge access, fuel benefits.",
+            "4": "💸 *Personal Loan*: Up to ₹20L, low interest, fast approval.",
+            "5": "🚗 *Vehicle Loan*: 100% on-road price funding with flexible EMIs."
         }
-        reply = response_map.get(user_input)
-        if reply:
-            session["step"] = "more_help"
-            return jsonify({"reply": f"{reply}\n\nWould you like more assistance?\n\nType `1` to return to the main menu or `exit` to end the chat."})
+        if user_input in services:
+            session["last_service"] = user_input
+            session["step"] = "after_service"
+            return jsonify({"reply": f"{services[user_input]}\n\nReply with:\n1️⃣ Main Menu\n2️⃣ Know More\n0️⃣ Exit"})
         else:
-            return jsonify({"reply": "⚠️ Invalid option. Please type a number between 1 and 5."})
+            return jsonify({"reply": "⚠️ Please choose a valid option (1–5)."})
 
-    elif session["step"] == "more_help":
+    elif session["step"] == "after_service":
         if user_input == "1":
             session["step"] = "menu"
-            return jsonify({"reply": "Back to Main Menu:\n\n1. Savings Account\n2. Current Account\n3. Credit Card\n4. Personal Loan\n5. Vehicle Loan"})
-        elif user_input.lower() == "exit":
+            return jsonify({"reply": menu_message()})
+        elif user_input == "2":
+            session["step"] = "more_help"
+            return jsonify({"reply": "📞 Thank you for your interest! Since this is a testing bot, we have limited info right now.\nOur banking agent will contact you shortly with complete details."})
+        elif user_input == "0":
             user_sessions.pop(user_id, None)
-            return jsonify({"reply": "🙏 Thank you for chatting with Rahul's Bot. Have a great day!"})
+            return jsonify({"reply": "🙏 Thank you for chatting with Rahul Bank. Goodbye!"})
         else:
-            return jsonify({"reply": "Please type `1` for main menu or `exit` to end the chat."})
+            return jsonify({"reply": "Please type 1️⃣ for Main Menu, 2️⃣ for more info, or 0️⃣ to Exit."})
 
-    else:
-        session["step"] = "menu"
-        return jsonify({"reply": "Let’s start over. Please select an option:\n1. Savings Account\n2. Current Account\n3. Credit Card\n4. Personal Loan\n5. Vehicle Loan"})
+    elif session["step"] == "more_help":
+        return jsonify({"reply": "👋 Is there anything else I can help with?\nType 1 for Main Menu or 0 to Exit."})
+
+    return jsonify({"reply": "I didn't understand that. Please use the available options or type `0` to exit."})
+
+def menu_message():
+    return (
+        "Main Menu:\n\n"
+        "1️⃣ Savings Account\n"
+        "2️⃣ Current Account\n"
+        "3️⃣ Credit Card\n"
+        "4️⃣ Personal Loan\n"
+        "5️⃣ Vehicle Loan\n\n"
+        "Please type the number of the service you'd like to explore."
+    )
