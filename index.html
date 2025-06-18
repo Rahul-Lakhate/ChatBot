@@ -1,55 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
+  <title>Rahul Bank</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Rahul's ChatBot Assistant</title>
   <style>
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f4f6f8;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      background-color: #f9f9f9;
     }
 
-    .chat-container {
-      width: 95%;
+    header {
+      background-color: #1e88e5;
+      color: white;
+      padding: 16px 32px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+
+    .hero {
+      padding: 60px 30px;
+      text-align: center;
+      background-color: #f1faff;
+    }
+
+    .hero h2 {
+      font-size: 2rem;
+      margin-bottom: 16px;
+      color: #333;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: #555;
       max-width: 600px;
-      height: 90vh;
-      background: #ffffff;
+      margin: 0 auto;
+    }
+
+    /* Chatbot floating button */
+    .chatbot-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #1e88e5;
+      color: white;
+      border: none;
+      padding: 12px 16px;
+      font-size: 16px;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      z-index: 1000;
+    }
+
+    .chatbot-container {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 350px;
+      max-height: 500px;
+      background: white;
       border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-      display: flex;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      display: none;
       flex-direction: column;
       overflow: hidden;
+      z-index: 999;
     }
 
     .chat-header {
-      padding: 16px;
       background-color: #1e88e5;
       color: white;
+      padding: 12px;
+      font-size: 1rem;
       text-align: center;
-      font-size: 1.25rem;
-      font-weight: bold;
     }
 
     .chat-messages {
       flex: 1;
-      padding: 16px;
+      padding: 12px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
+      background-color: #fafafa;
     }
 
     .message {
       max-width: 80%;
-      padding: 12px 14px;
-      border-radius: 12px;
-      font-size: 0.95rem;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 0.9rem;
       line-height: 1.4;
       white-space: pre-wrap;
     }
@@ -69,24 +115,24 @@
     .chat-input-area {
       display: flex;
       border-top: 1px solid #ddd;
-      padding: 12px;
+      padding: 8px;
     }
 
     #messageInput {
       flex: 1;
-      padding: 10px 12px;
+      padding: 8px 10px;
+      font-size: 0.95rem;
       border: 1px solid #ccc;
       border-radius: 8px 0 0 8px;
-      font-size: 1rem;
       outline: none;
     }
 
     #sendButton {
-      padding: 0 20px;
-      font-size: 1rem;
+      padding: 0 16px;
       background-color: #1e88e5;
       color: white;
       border: none;
+      font-size: 0.95rem;
       border-radius: 0 8px 8px 0;
       cursor: pointer;
     }
@@ -95,34 +141,49 @@
       background-color: #1669bb;
     }
 
-    @media (max-width: 600px) {
-      .chat-container {
-        height: 95vh;
+    @media (max-width: 400px) {
+      .chatbot-container {
+        width: 95%;
+        right: 2.5%;
+        bottom: 90px;
       }
     }
   </style>
 </head>
 <body>
 
-  <div class="chat-container">
-    <div class="chat-header">
-      🤖 Rahul's ChatBot Assistant
-    </div>
+  <!-- Main banking layout -->
+  <header>
+    <h1>Welcome to Rahul Bank 🏦</h1>
+  </header>
 
-    <div id="chatMessages" class="chat-messages">
-      <!-- Chat messages go here -->
-    </div>
+  <section class="hero">
+    <h2>Secure. Reliable. Friendly Banking.</h2>
+    <p>Experience seamless banking services with a human touch. From savings to salary accounts, we’ve got you covered. Need help? Our chatbot is here 24/7.</p>
+  </section>
 
+  <!-- Chatbot widget -->
+  <button class="chatbot-toggle" onclick="toggleChat()">💬 Chat with us</button>
+
+  <div class="chatbot-container" id="chatbotWidget">
+    <div class="chat-header">🤖 Rahul's ChatBot Assistant</div>
+    <div id="chatMessages" class="chat-messages"></div>
     <div class="chat-input-area">
       <input type="text" id="messageInput" placeholder="Type your message..." />
       <button id="sendButton">Send</button>
     </div>
   </div>
 
+  <!-- Script for chatbot -->
   <script>
+    const chatbotWidget = document.getElementById('chatbotWidget');
     const chatMessages = document.getElementById('chatMessages');
     const messageInput = document.getElementById('messageInput');
     const sendButton = document.getElementById('sendButton');
+
+    function toggleChat() {
+      chatbotWidget.style.display = chatbotWidget.style.display === 'flex' ? 'none' : 'flex';
+    }
 
     function appendMessage(text, sender) {
       const msgDiv = document.createElement('div');
@@ -138,6 +199,7 @@
 
       appendMessage(message, 'user');
       messageInput.value = '';
+
       try {
         const response = await fetch('/chat', {
           method: 'POST',
@@ -156,10 +218,11 @@
       if (e.key === 'Enter') sendMessage();
     });
 
-    // Auto-start the chat
+    // Initial auto-message
     window.onload = () => {
       appendMessage("Hi, this is the ChatBot created by Rahul. 👋\nWhat's your full name?", 'bot');
     };
   </script>
+
 </body>
 </html>
