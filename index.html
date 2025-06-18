@@ -1,29 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Rahul Bank – Smart Banking</title>
+  <meta charset="UTF-8" />
+  <title>Rahul Bank – Smart, Secure Banking</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     :root {
-      --primary: #0056b3;
-      --secondary: #f4f7fa;
+      --primary: #9e1c2f;
+      --secondary: #f9f9f9;
+      --dark: #111;
       --light: #ffffff;
-      --dark: #222;
     }
 
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background-color: var(--secondary);
+      background: var(--secondary);
       color: var(--dark);
     }
 
-    /* HEADER */
+    /* Header */
     header {
-      background-color: var(--primary);
-      padding: 20px 40px;
-      color: var(--light);
+      background: var(--primary);
+      color: white;
+      padding: 18px 40px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -35,8 +35,8 @@
     }
 
     nav a {
-      color: var(--light);
-      margin-left: 20px;
+      color: white;
+      margin-left: 24px;
       text-decoration: none;
       font-size: 1rem;
     }
@@ -45,21 +45,21 @@
       text-decoration: underline;
     }
 
-    /* HERO SECTION */
-    .hero {
-      text-align: center;
-      padding: 100px 20px 60px;
-      background: linear-gradient(to right, #0056b3, #009ffd);
+    /* Banner */
+    .banner {
+      background: linear-gradient(to right, #9e1c2f, #cc1e3c);
       color: white;
+      padding: 80px 20px 60px;
+      text-align: center;
     }
 
-    .hero h2 {
+    .banner h2 {
       font-size: 2.8rem;
-      margin-bottom: 10px;
+      margin-bottom: 14px;
     }
 
-    .hero p {
-      font-size: 1.1rem;
+    .banner p {
+      font-size: 1.2rem;
       margin-bottom: 30px;
       max-width: 600px;
       margin-left: auto;
@@ -67,20 +67,60 @@
     }
 
     .cta-button {
+      background: #fff;
+      color: #9e1c2f;
       padding: 12px 24px;
       font-size: 1rem;
-      color: white;
-      background-color: #003c8f;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
+      font-weight: bold;
     }
 
     .cta-button:hover {
-      background-color: #002c70;
+      background: #fce9ec;
     }
 
-    /* CHATBOT */
+    /* Services */
+    .services {
+      padding: 60px 40px;
+      background-color: white;
+      text-align: center;
+    }
+
+    .services h3 {
+      font-size: 2rem;
+      margin-bottom: 30px;
+    }
+
+    .service-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+    }
+
+    .service-card {
+      background: #f5f5f5;
+      border-radius: 10px;
+      padding: 30px;
+      width: 280px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      text-align: left;
+    }
+
+    .service-card h4 {
+      margin-top: 0;
+      color: #9e1c2f;
+      font-size: 1.2rem;
+    }
+
+    .service-card p {
+      font-size: 0.95rem;
+      color: #444;
+    }
+
+    /* Chatbot styles */
     .chat-toggle {
       position: fixed;
       bottom: 20px;
@@ -109,12 +149,6 @@
       flex-direction: column;
       overflow: hidden;
       z-index: 999;
-      animation: fadeInUp 0.3s ease;
-    }
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
     }
 
     .chat-header {
@@ -167,7 +201,7 @@
     }
 
     .user-message {
-      background: #d6ecff;
+      background: #ffe6e9;
       align-self: flex-end;
       border-bottom-right-radius: 0;
     }
@@ -178,7 +212,11 @@
       border-bottom-left-radius: 0;
     }
 
-    @media (max-width: 450px) {
+    @media (max-width: 600px) {
+      .service-card {
+        width: 90%;
+      }
+
       .chat-window {
         width: 90%;
         right: 5%;
@@ -195,23 +233,47 @@
       <a href="#">Home</a>
       <a href="#">Accounts</a>
       <a href="#">Loans</a>
+      <a href="#">Cards</a>
       <a href="#">Support</a>
     </nav>
   </header>
 
-  <!-- Hero -->
-  <section class="hero">
-    <h2>Modern Banking at Your Fingertips</h2>
-    <p>Welcome to Rahul Bank. Your trusted partner in financial growth. Apply for savings, current or salary accounts with ease and start your smart banking journey today.</p>
-    <button class="cta-button">Get Started</button>
+  <!-- Banner -->
+  <section class="banner">
+    <h2>Welcome to Rahul Bank</h2>
+    <p>Smart, Secure, and Seamless Banking for every Indian. Apply for your account now and experience banking redefined.</p>
+    <button class="cta-button">Open Account</button>
+  </section>
+
+  <!-- Services -->
+  <section class="services">
+    <h3>Our Core Services</h3>
+    <div class="service-grid">
+      <div class="service-card">
+        <h4>Savings Account</h4>
+        <p>Enjoy high interest rates and zero balance benefits with our savings accounts.</p>
+      </div>
+      <div class="service-card">
+        <h4>Personal Loans</h4>
+        <p>Instant approval and competitive interest rates for all your needs.</p>
+      </div>
+      <div class="service-card">
+        <h4>Credit Cards</h4>
+        <p>Explore cards with great cashback, rewards and travel benefits.</p>
+      </div>
+      <div class="service-card">
+        <h4>Mobile Banking</h4>
+        <p>Bank on the go with our secure and easy-to-use mobile app.</p>
+      </div>
+    </div>
   </section>
 
   <!-- Chatbot Toggle -->
-  <button class="chat-toggle" onclick="toggleChat()">💬 Need Help?</button>
+  <button class="chat-toggle" onclick="toggleChat()">💬 Chat with us</button>
 
   <!-- Chatbot Window -->
   <div class="chat-window" id="chatWindow">
-    <div class="chat-header">🤖 Rahul's AI ChatBot</div>
+    <div class="chat-header">🤖 Rahul's AI Assistant</div>
     <div class="chat-messages" id="chatMessages"></div>
     <div class="chat-input">
       <input type="text" id="messageInput" placeholder="Type your message..." />
@@ -219,6 +281,7 @@
     </div>
   </div>
 
+  <!-- Chatbot Script -->
   <script>
     const chatWindow = document.getElementById("chatWindow");
     const chatMessages = document.getElementById("chatMessages");
@@ -262,7 +325,6 @@
       if (e.key === "Enter") sendMessage();
     });
 
-    // Auto-greet on load
     window.onload = () => {
       appendMessage("Hi, this is the ChatBot created by Rahul. 👋\nWhat's your full name?", "bot");
     };
