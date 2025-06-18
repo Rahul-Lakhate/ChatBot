@@ -17,6 +17,9 @@
       font-family: 'Segoe UI', sans-serif;
       background: var(--secondary);
       color: var(--dark);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
     /* Header */
@@ -118,6 +121,26 @@
     .service-card p {
       font-size: 0.95rem;
       color: #444;
+    }
+
+    /* Footer */
+    footer {
+      background: #222;
+      color: white;
+      text-align: center;
+      padding: 20px 40px;
+      font-size: 0.9rem;
+      margin-top: auto;
+    }
+
+    footer a {
+      color: #fce9ec;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
     }
 
     /* Chatbot styles */
@@ -268,6 +291,17 @@
     </div>
   </section>
 
+  <!-- Footer -->
+  <footer>
+    &copy; 2025 Rahul Bank. All rights reserved.
+    |
+    <a href="#">Privacy Policy</a>
+    |
+    <a href="#">Terms & Conditions</a>
+    |
+    <a href="#">Contact Us</a>
+  </footer>
+
   <!-- Chatbot Toggle -->
   <button class="chat-toggle" onclick="toggleChat()">💬 Chat with us</button>
 
@@ -325,11 +359,9 @@
       if (e.key === "Enter") sendMessage();
     });
 
-   window.onload = () => {
-  // Optional greeting only
-  appendMessage("Hi, this is the ChatBot created by Rahul. 👋" May I know your name, Please?, "bot");
-};
-
+    window.onload = () => {
+      appendMessage("Hi, this is the ChatBot created by Rahul. 👋 May I know your name, please?", "bot");
+    };
   </script>
 
 </body>
