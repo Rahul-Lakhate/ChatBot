@@ -1,16 +1,16 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import openai
 import os
 
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# In-memory session storage
+# Simple in-memory session tracker
 user_sessions = {}
 
 @app.route("/")
 def home():
-    return "🤖 Rahul Bank Chatbot is Running!"
+    return render_template("index.html")  # Serves index.html from /templates
 
 @app.route("/chat", methods=["POST"])
 def chat():
@@ -27,59 +27,58 @@ def chat():
         session["step"] = "name"
         return jsonify({"reply": "Hi, this is the ChatBot created by Rahul. 👋\nMay I know your name, please?"})
 
-    # Step 2: Get name
     elif session["step"] == "name":
         session["name"] = user_input
         session["step"] = "menu"
-        return jsonify({"reply": f"Nice to meet you, {user_input}! How can I assist you today?\n\n1. Savings Account\n2. Current Account\n3. Credit Card\n4. Personal Loan\n5. Vehicle Loan\n\nPlease type the option number."})
+        return jsonify({"reply": f"Nice to meet you, {user_input}! How can I assist you today?\n\n"
+                                 "1. Savings Account\n2. Current Account\n3. Credit Card\n"
+                                 "4. Personal Loan\n5. Vehicle Loan\n\nPlease type the option number."})
 
-    # Step 3: Show service and ask for next action
     elif session["step"] == "menu":
         services = {
-            "1": "💰 *Savings Account*: Our savings accounts offer up to 6% annual interest with zero maintenance charges.",
-            "2": "🏦 *Current Account*: Perfect for businesses and frequent transactions. Overdraft, cheque book, premium support.",
-            "3": "💳 *Credit Card*: Rewards, cashback, travel cards. 0% interest for 90 days. No joining fee!",
-            "4": "💸 *Personal Loan*: Instant approvals up to ₹20 lakhs. Low interest starting at 10.25%.",
-            "5": "🚗 *Vehicle Loan*: Attractive EMIs and up to 100% on-road funding for your dream car or bike."
+            "1": "💰 *Savings Account*: Up to 6% interest. Zero maintenance. 24x7 access.",
+            "2": "🏦 *Current Account*: Ideal for businesses. Overdraft, cheque, priority support.",
+            "3": "💳 *Credit Card*: Rewards, cashback & 0% interest for 90 days.",
+            "4": "💸 *Personal Loan*: Up to ₹20L, 10.25% rate, instant disbursal.",
+            "5": "🚗 *Vehicle Loan*: Finance up to 100% on-road price. Low EMIs."
         }
-
         if user_input in services:
             session["last_option"] = user_input
             session["step"] = "after_service"
-            return jsonify({"reply": f"{services[user_input]}\n\nReply with:\n1️⃣ Main Menu\n2️⃣ Know More\n0️⃣ Exit"})
+            return jsonify({"reply": f"{services[user_input]}\n\n"
+                                     "Reply with:\n1️⃣ Main Menu\n2️⃣ Know More\n0️⃣ Exit"})
         else:
-            return jsonify({"reply": "⚠️ Invalid option. Please type a number between 1 and 5."})
+            return jsonify({"reply": "⚠️ Invalid option. Please type 1–5."})
 
-    # Step 4: After showing service details
     elif session["step"] == "after_service":
         if user_input == "1":
             session["step"] = "menu"
-            return jsonify({"reply": "Back to Main Menu:\n\n1. Savings Account\n2. Current Account\n3. Credit Card\n4. Personal Loan\n5. Vehicle Loan"})
+            return jsonify({"reply": "Back to Main Menu:\n\n"
+                                     "1. Savings Account\n2. Current Account\n3. Credit Card\n"
+                                     "4. Personal Loan\n5. Vehicle Loan"})
         elif user_input == "2":
             session["step"] = "more_help"
-            return jsonify({"reply": (
-                "📞 This is a *testing bot*. We have lesser details available right now.\n"
-                "🧑‍💼 Our banking agent will get in touch with you shortly.\n\n"
-                "Reply with:\n1️⃣ Main Menu\n0️⃣ Exit"
-            )})
+            return jsonify({"reply": "📞 This is a *testing bot*. Limited details available.\n"
+                                     "🧑‍💼 A banking agent will contact you shortly.\n\n"
+                                     "Reply with:\n1️⃣ Main Menu\n0️⃣ Exit"})
         elif user_input == "0":
             user_sessions.pop(user_id, None)
-            return jsonify({"reply": "🙏 Thank you for chatting with Rahul Bank. Have a great day!"})
+            return jsonify({"reply": "🙏 Thank you for chatting with Rahul Bank. Goodbye!"})
         else:
-            return jsonify({"reply": "Please type 1️⃣ for Main Menu, 2️⃣ for more info, or 0️⃣ to Exit."})
+            return jsonify({"reply": "Please reply with 1️⃣, 2️⃣, or 0️⃣."})
 
-    # Step 5: After 'Know More'
     elif session["step"] == "more_help":
         if user_input == "1":
             session["step"] = "menu"
-            return jsonify({"reply": "Back to Main Menu:\n\n1. Savings Account\n2. Current Account\n3. Credit Card\n4. Personal Loan\n5. Vehicle Loan"})
+            return jsonify({"reply": "Back to Main Menu:\n\n"
+                                     "1. Savings Account\n2. Current Account\n3. Credit Card\n"
+                                     "4. Personal Loan\n5. Vehicle Loan"})
         elif user_input == "0":
             user_sessions.pop(user_id, None)
-            return jsonify({"reply": "🙏 Thank you for chatting with Rahul Bank. Have a great day!"})
+            return jsonify({"reply": "🙏 Thank you for chatting with Rahul Bank. Goodbye!"})
         else:
-            return jsonify({"reply": "Please type 1️⃣ for Main Menu or 0️⃣ to Exit."})
+            return jsonify({"reply": "Please reply with 1️⃣ for Main Menu or 0️⃣ to Exit."})
 
-    # Default fallback
     else:
         session["step"] = "menu"
-        return jsonify({"reply": "Let’s start over. Please choose a service:\n1. Savings Account\n2. Current Account\n3. Credit Card\n4. Personal Loan\n5. Vehicle Loan"})
+        return jsonify({"reply": "Let’s start over. Select an option:\n1–Savings\n2–Current\n3–Credit Card\n4–Loan\n5–Vehicle Loan"})
