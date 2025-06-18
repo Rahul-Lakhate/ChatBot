@@ -80,7 +80,7 @@ def chat():
                                      "4. Personal Loan\n5. Vehicle Loan"})
         elif user_input == "2":
             session["step"] = "more_help"
-            return jsonify({"reply": "📞 This is a *testing bot*. Our agents will contact you shortly.\n\n"
+            return jsonify({"reply": "📞 I'm bot with limited info right now. Our agents will contact you shortly.\n\n"
                                      "Reply with:\n1️⃣ Main Menu\n0️⃣ Exit"})
         elif user_input == "0":
             user_sessions.pop(user_id, None)
