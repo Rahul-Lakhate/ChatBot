@@ -1,96 +1,63 @@
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify
+import openai
 import os
 
 app = Flask(__name__)
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# Session memory (very basic; resets every restart)
+# Simple in-memory session tracker (not persistent)
 user_sessions = {}
 
 @app.route("/")
 def home():
-    return send_file("index.html")
+    return "🤖 Rahul Bank Chatbot is Running!"
 
 @app.route("/chat", methods=["POST"])
 def chat():
     user_input = request.json.get("message", "").strip()
-    session_id = request.remote_addr  # basic session by IP
+    user_id = request.remote_addr  # simplistic session handling
 
-    if session_id not in user_sessions:
-        user_sessions[session_id] = {
-            "step": 0,
-            "data": {}
+    # Initialize session
+    if user_id not in user_sessions:
+        user_sessions[user_id] = {"step": "greeting"}
+
+    session = user_sessions[user_id]
+
+    # Chat Flow
+    if session["step"] == "greeting":
+        session["step"] = "name"
+        return jsonify({"reply": "Hi, this is the ChatBot created by Rahul. 👋\nMay I know your name, please?"})
+
+    elif session["step"] == "name":
+        session["name"] = user_input
+        session["step"] = "menu"
+        return jsonify({"reply": f"Nice to meet you, {user_input}! How can I assist you today?\n\n1. Savings Account\n2. Current Account\n3. Credit Card\n4. Personal Loan\n5. Vehicle Loan\n\nPlease type the option number."})
+
+    elif session["step"] == "menu":
+        response_map = {
+            "1": "💰 *Savings Account*: Our savings accounts offer up to 6% annual interest with zero maintenance charges. Ideal for daily banking with high returns.",
+            "2": "🏦 *Current Account*: Perfect for businesses and frequent transactions. Enjoy overdraft, cheque books, and premium support.",
+            "3": "💳 *Credit Card*: Choose from our rewards, cashback, or travel cards. 0% interest for the first 90 days. No joining fees!",
+            "4": "💸 *Personal Loan*: Instant approvals up to ₹20 lakhs. Low interest starting at 10.25%. Minimal documentation required.",
+            "5": "🚗 *Vehicle Loan*: Finance your dream car or bike with attractive EMIs and up to 100% on-road funding."
         }
-
-    session = user_sessions[session_id]
-    step = session["step"]
-
-    # Step 0: Welcome Message
-    if step == 0:
-        session["step"] += 1
-        return jsonify({"reply": "Hi, this is the ChatBot created by Rahul. 👋\nWhat's your full name?"})
-
-    # Step 1: Get Name
-    elif step == 1:
-        session["data"]["name"] = user_input
-        session["step"] += 1
-        return jsonify({"reply": f"Nice to meet you, {user_input} 😊. Can you share your phone number?"})
-
-    # Step 2: Get Phone
-    elif step == 2:
-        session["data"]["phone"] = user_input
-        session["step"] += 1
-        return jsonify({"reply": "Got it! What's your email address?"})
-
-    # Step 3: Get Email
-    elif step == 3:
-        session["data"]["email"] = user_input
-        session["step"] += 1
-        return jsonify({"reply": "Thank you. Please tell me your location (City or State) 🌍"})
-
-    # Step 4: Get Location
-    elif step == 4:
-        session["data"]["location"] = user_input
-        session["step"] += 1
-        return jsonify({"reply": "What type of bank account are you looking for?\nPlease select one:\n1️⃣ Savings\n2️⃣ Current\n3️⃣ Salary\n4️⃣ Fixed Deposit"})
-
-    # Step 5: Choose Account Type
-    elif step == 5:
-        options = {
-            "1": "Savings",
-            "2": "Current",
-            "3": "Salary",
-            "4": "Fixed Deposit"
-        }
-        selection = options.get(user_input.strip())
-
-        if selection:
-            session["data"]["account_type"] = selection
-            session["step"] += 1
-            return jsonify({"reply": f"You selected '{selection}' account.\n\n✅ Initial funding of ₹1,000 is required.\n📋 Basic KYC documents are mandatory.\n📅 Account will be activated in 24–48 hours.\n\nDo you agree to the terms and wish to proceed? (Yes/No)"})
+        reply = response_map.get(user_input)
+        if reply:
+            session["step"] = "more_help"
+            return jsonify({"reply": f"{reply}\n\nWould you like more assistance?\n\nType `1` to return to the main menu or `exit` to end the chat."})
         else:
-            return jsonify({"reply": "⚠️ Please reply with a valid option number (1–4)."})
+            return jsonify({"reply": "⚠️ Invalid option. Please type a number between 1 and 5."})
 
-    # Step 6: Confirm Submission
-    elif step == 6:
-        if user_input.lower() in ["yes", "y"]:
-            name = session["data"].get("name")
-            acc_type = session["data"].get("account_type")
-            session["step"] += 1
-            return jsonify({"reply": f"🎉 Thank you {name}! Your request to open a {acc_type} account has been recorded. Our executive will contact you shortly."})
+    elif session["step"] == "more_help":
+        if user_input == "1":
+            session["step"] = "menu"
+            return jsonify({"reply": "Back to Main Menu:\n\n1. Savings Account\n2. Current Account\n3. Credit Card\n4. Personal Loan\n5. Vehicle Loan"})
+        elif user_input.lower() == "exit":
+            user_sessions.pop(user_id, None)
+            return jsonify({"reply": "🙏 Thank you for chatting with Rahul Bank. Have a great day!"})
         else:
-            session["step"] += 1
-            return jsonify({"reply": "❌ No problem. You can start the process again anytime."})
+            return jsonify({"reply": "Please type `1` for main menu or `exit` to end the chat."})
 
-    # Step 7+: Ended
     else:
-        return jsonify({"reply": "🙏 Thank you for using Rahul's ChatBot. Type 'restart' to begin again."})
-
-@app.route("/restart", methods=["POST"])
-def restart():
-    session_id = request.remote_addr
-    user_sessions.pop(session_id, None)
-    return jsonify({"reply": "🔄 Session restarted. Hi, this is the ChatBot created by Rahul. What's your full name?"})
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+        session["step"] = "menu"
+        return jsonify({"reply": "Let’s start over. Please select an option:\n1. Savings Account\n2. Current Account\n3. Credit Card\n4. Personal Loan\n5. Vehicle Loan"})
