@@ -2,194 +2,238 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Rahul Bank</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rahul Bank – Smart Banking</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f9f9f9;
+    :root {
+      --primary: #0056b3;
+      --secondary: #f4f7fa;
+      --light: #ffffff;
+      --dark: #222;
     }
 
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--secondary);
+      color: var(--dark);
+    }
+
+    /* HEADER */
     header {
-      background-color: #1e88e5;
-      color: white;
-      padding: 16px 32px;
-      text-align: center;
+      background-color: var(--primary);
+      padding: 20px 40px;
+      color: var(--light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     header h1 {
       margin: 0;
-      font-size: 2rem;
+      font-size: 1.8rem;
     }
 
+    nav a {
+      color: var(--light);
+      margin-left: 20px;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    /* HERO SECTION */
     .hero {
-      padding: 60px 30px;
       text-align: center;
-      background-color: #f1faff;
+      padding: 100px 20px 60px;
+      background: linear-gradient(to right, #0056b3, #009ffd);
+      color: white;
     }
 
     .hero h2 {
-      font-size: 2rem;
-      margin-bottom: 16px;
-      color: #333;
+      font-size: 2.8rem;
+      margin-bottom: 10px;
     }
 
     .hero p {
       font-size: 1.1rem;
-      color: #555;
+      margin-bottom: 30px;
       max-width: 600px;
-      margin: 0 auto;
+      margin-left: auto;
+      margin-right: auto;
     }
 
-    /* Chatbot floating button */
-    .chatbot-toggle {
+    .cta-button {
+      padding: 12px 24px;
+      font-size: 1rem;
+      color: white;
+      background-color: #003c8f;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .cta-button:hover {
+      background-color: #002c70;
+    }
+
+    /* CHATBOT */
+    .chat-toggle {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      background-color: #1e88e5;
+      background: var(--primary);
       color: white;
       border: none;
-      padding: 12px 16px;
-      font-size: 16px;
       border-radius: 50px;
+      padding: 14px 20px;
+      font-size: 1rem;
       cursor: pointer;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
       z-index: 1000;
+      box-shadow: 0 5px 12px rgba(0,0,0,0.2);
     }
 
-    .chatbot-container {
+    .chat-window {
       position: fixed;
       bottom: 80px;
       right: 20px;
-      width: 350px;
+      width: 360px;
       max-height: 500px;
       background: white;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
       display: none;
       flex-direction: column;
       overflow: hidden;
       z-index: 999;
+      animation: fadeInUp 0.3s ease;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .chat-header {
-      background-color: #1e88e5;
+      background: var(--primary);
       color: white;
-      padding: 12px;
+      padding: 14px;
       font-size: 1rem;
       text-align: center;
     }
 
     .chat-messages {
       flex: 1;
-      padding: 12px;
+      padding: 14px;
       overflow-y: auto;
+      background: var(--secondary);
       display: flex;
       flex-direction: column;
       gap: 10px;
-      background-color: #fafafa;
+    }
+
+    .chat-input {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #ddd;
+      background: white;
+    }
+
+    #messageInput {
+      flex: 1;
+      padding: 10px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px 0 0 5px;
+    }
+
+    #sendButton {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 0 5px 5px 0;
+      cursor: pointer;
     }
 
     .message {
-      max-width: 80%;
       padding: 10px 14px;
-      border-radius: 10px;
-      font-size: 0.9rem;
-      line-height: 1.4;
-      white-space: pre-wrap;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      max-width: 80%;
     }
 
     .user-message {
-      background-color: #e3f2fd;
+      background: #d6ecff;
       align-self: flex-end;
       border-bottom-right-radius: 0;
     }
 
     .bot-message {
-      background-color: #f1f1f1;
+      background: #eee;
       align-self: flex-start;
       border-bottom-left-radius: 0;
     }
 
-    .chat-input-area {
-      display: flex;
-      border-top: 1px solid #ddd;
-      padding: 8px;
-    }
-
-    #messageInput {
-      flex: 1;
-      padding: 8px 10px;
-      font-size: 0.95rem;
-      border: 1px solid #ccc;
-      border-radius: 8px 0 0 8px;
-      outline: none;
-    }
-
-    #sendButton {
-      padding: 0 16px;
-      background-color: #1e88e5;
-      color: white;
-      border: none;
-      font-size: 0.95rem;
-      border-radius: 0 8px 8px 0;
-      cursor: pointer;
-    }
-
-    #sendButton:hover {
-      background-color: #1669bb;
-    }
-
-    @media (max-width: 400px) {
-      .chatbot-container {
-        width: 95%;
-        right: 2.5%;
-        bottom: 90px;
+    @media (max-width: 450px) {
+      .chat-window {
+        width: 90%;
+        right: 5%;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- Main banking layout -->
+  <!-- Header -->
   <header>
-    <h1>Welcome to Rahul Bank 🏦</h1>
+    <h1>Rahul Bank</h1>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Accounts</a>
+      <a href="#">Loans</a>
+      <a href="#">Support</a>
+    </nav>
   </header>
 
+  <!-- Hero -->
   <section class="hero">
-    <h2>Secure. Reliable. Friendly Banking.</h2>
-    <p>Experience seamless banking services with a human touch. From savings to salary accounts, we’ve got you covered. Need help? Our chatbot is here 24/7.</p>
+    <h2>Modern Banking at Your Fingertips</h2>
+    <p>Welcome to Rahul Bank. Your trusted partner in financial growth. Apply for savings, current or salary accounts with ease and start your smart banking journey today.</p>
+    <button class="cta-button">Get Started</button>
   </section>
 
-  <!-- Chatbot widget -->
-  <button class="chatbot-toggle" onclick="toggleChat()">💬 Chat with us</button>
+  <!-- Chatbot Toggle -->
+  <button class="chat-toggle" onclick="toggleChat()">💬 Need Help?</button>
 
-  <div class="chatbot-container" id="chatbotWidget">
-    <div class="chat-header">🤖 Rahul's ChatBot Assistant</div>
-    <div id="chatMessages" class="chat-messages"></div>
-    <div class="chat-input-area">
+  <!-- Chatbot Window -->
+  <div class="chat-window" id="chatWindow">
+    <div class="chat-header">🤖 Rahul's AI ChatBot</div>
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input">
       <input type="text" id="messageInput" placeholder="Type your message..." />
       <button id="sendButton">Send</button>
     </div>
   </div>
 
-  <!-- Script for chatbot -->
   <script>
-    const chatbotWidget = document.getElementById('chatbotWidget');
-    const chatMessages = document.getElementById('chatMessages');
-    const messageInput = document.getElementById('messageInput');
-    const sendButton = document.getElementById('sendButton');
+    const chatWindow = document.getElementById("chatWindow");
+    const chatMessages = document.getElementById("chatMessages");
+    const messageInput = document.getElementById("messageInput");
+    const sendButton = document.getElementById("sendButton");
 
     function toggleChat() {
-      chatbotWidget.style.display = chatbotWidget.style.display === 'flex' ? 'none' : 'flex';
+      chatWindow.style.display = chatWindow.style.display === "flex" ? "none" : "flex";
     }
 
     function appendMessage(text, sender) {
-      const msgDiv = document.createElement('div');
-      msgDiv.className = 'message ' + (sender === 'user' ? 'user-message' : 'bot-message');
-      msgDiv.textContent = text;
-      chatMessages.appendChild(msgDiv);
+      const message = document.createElement("div");
+      message.classList.add("message", sender === "user" ? "user-message" : "bot-message");
+      message.textContent = text;
+      chatMessages.appendChild(message);
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
@@ -197,30 +241,30 @@
       const message = messageInput.value.trim();
       if (!message) return;
 
-      appendMessage(message, 'user');
-      messageInput.value = '';
+      appendMessage(message, "user");
+      messageInput.value = "";
 
       try {
-        const response = await fetch('/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        const res = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ message })
         });
-        const data = await response.json();
-        appendMessage(data.reply || '⚠️ No reply received.', 'bot');
+        const data = await res.json();
+        appendMessage(data.reply || "⚠️ No reply received.", "bot");
       } catch (error) {
-        appendMessage('❌ Failed to connect to the server.', 'bot');
+        appendMessage("❌ Server error. Try again later.", "bot");
       }
     }
 
-    sendButton.addEventListener('click', sendMessage);
-    messageInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') sendMessage();
+    sendButton.addEventListener("click", sendMessage);
+    messageInput.addEventListener("keypress", e => {
+      if (e.key === "Enter") sendMessage();
     });
 
-    // Initial auto-message
+    // Auto-greet on load
     window.onload = () => {
-      appendMessage("Hi, this is the ChatBot created by Rahul. 👋\nWhat's your full name?", 'bot');
+      appendMessage("Hi, this is the ChatBot created by Rahul. 👋\nWhat's your full name?", "bot");
     };
   </script>
 
